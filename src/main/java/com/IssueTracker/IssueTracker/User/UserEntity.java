@@ -17,10 +17,10 @@ import lombok.NoArgsConstructor;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotEmpty private String name;
+    @NotEmpty private String username;
 
     @NotEmpty private String email;
 
