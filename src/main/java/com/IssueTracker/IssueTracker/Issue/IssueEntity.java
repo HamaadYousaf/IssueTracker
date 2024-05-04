@@ -28,13 +28,13 @@ public class IssueEntity {
 
     private String description;
 
-    @Column(columnDefinition="TEXT not null")
+    @Column(columnDefinition="varchar(22) not null")
     private Priority priority = Priority.NORMAL;
 
-    @Column(columnDefinition="TEXT not null")
+    @Column(columnDefinition="varchar(22) not null")
     private Category category;
 
-    @Column(columnDefinition="TEXT not null")
+    @Column(columnDefinition="varchar(22) not null")
     private Status status = Status.NEW;
 
     private LocalDate creationDate = LocalDate.now();
