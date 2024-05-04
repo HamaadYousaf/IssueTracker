@@ -67,6 +67,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>issue-tracker-images</finalName>
 	</build>
 
 </project>
