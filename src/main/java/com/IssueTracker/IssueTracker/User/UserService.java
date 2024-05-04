@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -27,5 +28,16 @@ public class UserService {
 
     public List<UserEntity> getUsersByEmailOrUsername(String email, String username) {
         return new ArrayList<>(userRepository.getUsersByEmailOrUsername(email, username));
+    }
+
+    public Optional<UserEntity> getUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public boolean userExists(Long id){
+        return userRepository.existsById(id);
+    }
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
     }
 }

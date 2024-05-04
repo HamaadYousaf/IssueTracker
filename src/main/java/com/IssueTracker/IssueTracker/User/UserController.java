@@ -2,12 +2,10 @@ package com.IssueTracker.IssueTracker.User;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -39,5 +37,29 @@ public class UserController {
         List<UserEntity> allUsers = userService.getUsers();
 
         return new ResponseEntity<>(allUsers, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/users/{id}")
+    public ResponseEntity<UserEntity> getUserById(@PathVariable("id") Long id) {
+
+        Optional<UserEntity> userById = userService.getUserById(id);
+
+        if (userById.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+
+        return new ResponseEntity<>(userById.get(), HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "/users/{id}")
+    public ResponseEntity<UserEntity> deleteUserById(@PathVariable("id") Long id) {
+
+        if (!userService.userExists(id)) {
+            throw new UserNotFoundException();
+        }
+
+        userService.deleteUserById(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

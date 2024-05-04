@@ -30,6 +30,10 @@ class UserControllerTest {
 
     private final ObjectMapper objectMapper;
 
+    UserEntity testUserASaved;
+    UserEntity testUserBSaved;
+    UserEntity testUserCSaved;
+
     @Autowired
     public UserControllerTest(UserService userService, MockMvc mockMvc) {
         this.userService = userService;
@@ -40,11 +44,11 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         UserEntity testUserA = TestUserUtil.createTestUserA();
-        userService.saveUser(testUserA);
+        testUserASaved = userService.saveUser(testUserA);
         UserEntity testUserB = TestUserUtil.createTestUserB();
-        userService.saveUser(testUserB);
+        testUserBSaved = userService.saveUser(testUserB);
         UserEntity testUserC = TestUserUtil.createTestUserC();
-        userService.saveUser(testUserC);
+        testUserCSaved = userService.saveUser(testUserC);
     }
 
     @Test
@@ -80,5 +84,55 @@ class UserControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/users"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.size()", is(3)));
+    }
+
+    @Test
+    public void testGetUserById() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/users/" + testUserASaved.getId())
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.username")
+                                .value(testUserASaved.getUsername()))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.email").value(testUserASaved.getEmail()))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.password")
+                                .value(testUserASaved.getPassword()));
+    }
+
+    @Test
+    public void testGetUserByIdWhenUserDoesNotExist() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/users/999")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteUserById() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/users/" + testUserASaved.getId())
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(2)));
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/users/" + testUserASaved.getId())
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteUserByIdWhenUserDoesNotExist() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/users/999")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }
