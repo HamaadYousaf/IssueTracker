@@ -112,6 +112,110 @@ class UserControllerTest {
     }
 
     @Test
+    public void testUpdateUsernameById() throws Exception {
+        testUserASaved.setUsername("UPDATED");
+        String testUserNewJson = objectMapper.writeValueAsString(testUserASaved);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/users/" + testUserASaved.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserNewJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(testUserASaved.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("UPDATED"))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.email").value(testUserASaved.getEmail()))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.password")
+                                .value(testUserASaved.getPassword()));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)));
+    }
+
+    @Test
+    public void testUpdateEmailById() throws Exception {
+        testUserASaved.setEmail("UPDATED");
+        String testUserNewJson = objectMapper.writeValueAsString(testUserASaved);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/users/" + testUserASaved.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserNewJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(testUserASaved.getId()))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.username")
+                                .value(testUserASaved.getUsername()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("UPDATED"))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.password")
+                                .value(testUserASaved.getPassword()));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)));
+    }
+
+    @Test
+    public void testUpdatePasswordById() throws Exception {
+        testUserASaved.setPassword("UPDATED");
+        String testUserNewJson = objectMapper.writeValueAsString(testUserASaved);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/users/" + testUserASaved.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserNewJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(testUserASaved.getId()))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.username")
+                                .value(testUserASaved.getUsername()))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.email").value(testUserASaved.getEmail()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("UPDATED"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)));
+    }
+
+    @Test
+    public void testUpdateAllById() throws Exception {
+        testUserASaved.setUsername("UPDATED");
+        testUserASaved.setEmail("UPDATED");
+        testUserASaved.setPassword("UPDATED");
+        String testUserNewJson = objectMapper.writeValueAsString(testUserASaved);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/users/" + testUserASaved.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserNewJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(testUserASaved.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("UPDATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("UPDATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.password").value("UPDATED"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)));
+    }
+
+    @Test
+    public void testUpdateUserByIdWhenUserDoesNotExist() throws Exception {
+        UserEntity testUserNew = TestUserUtil.createTestUserNew();
+        String testUserNewJson = objectMapper.writeValueAsString(testUserNew);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/users/999")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserNewJson))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
     public void testDeleteUserById() throws Exception {
         mockMvc.perform(
                         MockMvcRequestBuilders.delete("/users/" + testUserASaved.getId())
@@ -134,5 +238,56 @@ class UserControllerTest {
                         MockMvcRequestBuilders.delete("/users/999")
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testLoginUserSuccessful() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testLoginUserIncorrectUsername() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        testUserA.setUsername("INCORRECT");
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void testLoginUserIncorrectEmail() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        testUserA.setEmail("INCORRECT");
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void testLoginUserIncorrectPassword() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        testUserA.setPassword("INCORRECT");
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

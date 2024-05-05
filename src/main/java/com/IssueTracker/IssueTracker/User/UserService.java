@@ -34,10 +34,32 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public boolean userExists(Long id){
-        return userRepository.existsById(id);
+    public boolean userExists(Long id) {
+        return !userRepository.existsById(id);
     }
+
+    public UserEntity updateUser(UserEntity userEntity, Long id){
+        return userRepository
+                .findById(id)
+                .map(
+                        existingUser -> {
+                            existingUser.setId(id);
+                            Optional.ofNullable(userEntity.getUsername())
+                                    .ifPresent(existingUser::setUsername);
+                            Optional.ofNullable(userEntity.getEmail())
+                                    .ifPresent(existingUser::setEmail);
+                            Optional.ofNullable(userEntity.getPassword())
+                                    .ifPresent(existingUser::setPassword);
+                            return userRepository.save(existingUser);
+                        })
+                .orElseThrow(() -> new RuntimeException("User does not exist"));
+    }
+
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public UserEntity getUserByUsername(String username){
+        return userRepository.getUserByUsername(username);
     }
 }
