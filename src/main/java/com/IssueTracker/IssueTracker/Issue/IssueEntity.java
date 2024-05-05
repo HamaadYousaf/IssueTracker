@@ -28,14 +28,14 @@ public class IssueEntity {
 
     private String description;
 
-    @Column(columnDefinition="varchar(255) not null")
-    private Priority priority;
+    @Enumerated(value = EnumType.STRING)
+    private Priority priority = Priority.NORMAL;
 
-    @Column(columnDefinition="varchar(255)")
+    @Enumerated(value = EnumType.STRING)
     private Category category;
 
-    @Column(columnDefinition="varchar(255) not null")
-    private Status status;
+    @Enumerated(value = EnumType.STRING)
+    private Status status = Status.NEW;
 
     private LocalDate creationDate = LocalDate.now();
 
