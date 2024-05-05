@@ -239,4 +239,55 @@ class UserControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
+    @Test
+    public void testLoginUserSuccessful() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testLoginUserIncorrectUsername() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        testUserA.setUsername("INCORRECT");
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void testLoginUserIncorrectEmail() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        testUserA.setEmail("INCORRECT");
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void testLoginUserIncorrectPassword() throws Exception{
+        UserEntity testUserA = TestUserUtil.createTestUserA();
+        testUserA.setPassword("INCORRECT");
+        String testUserAJson = objectMapper.writeValueAsString(testUserA);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/users/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testUserAJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }

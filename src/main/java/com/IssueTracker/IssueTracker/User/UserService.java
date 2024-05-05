@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public boolean userExists(Long id) {
-        return userRepository.existsById(id);
+        return !userRepository.existsById(id);
     }
 
     public UserEntity updateUser(UserEntity userEntity, Long id){
@@ -57,5 +57,9 @@ public class UserService {
 
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public UserEntity getUserByUsername(String username){
+        return userRepository.getUserByUsername(username);
     }
 }
