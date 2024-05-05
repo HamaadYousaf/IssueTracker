@@ -51,6 +51,20 @@ public class UserController {
         return new ResponseEntity<>(userById.get(), HttpStatus.OK);
     }
 
+    @PutMapping(path = "/users/{id}")
+    public ResponseEntity<UserEntity> updateUserById(
+            @RequestBody UserEntity userEntity, @PathVariable("id") Long id) {
+
+        if (!userService.userExists(id)) {
+            throw new UserNotFoundException();
+        } else {
+            UserEntity updatedUser = userService.updateUser(userEntity, id);
+
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        }
+
+    }
+
     @DeleteMapping(path = "/users/{id}")
     public ResponseEntity<UserEntity> deleteUserById(@PathVariable("id") Long id) {
 
