@@ -1,5 +1,8 @@
 package com.IssueTracker.IssueTracker.Issue;
 
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 import com.IssueTracker.IssueTracker.User.UserEntity;
 import com.IssueTracker.IssueTracker.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,7 +74,7 @@ class IssueControllerTest {
     }
 
     @Test
-    void testCreateIssueSuccess() throws Exception {
+    public void testCreateIssueSuccess() throws Exception {
         IssueEntity testIssueNew = TestIssueUtil.createIssueNew();
         testIssueNew.setCreatedBy(savedCreatedUser);
         testIssueNew.setAssignedTo(savedAssignedUser);
@@ -90,15 +93,13 @@ class IssueControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.priority").value("NORMAL"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.category").value("FEATURE"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("ASSIGNED"))
-                .andExpect(
-                        MockMvcResultMatchers.jsonPath("$.creationDate")
-                                .value("2022-01-01"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creationDate").value("2022-01-01"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdBy").value(savedCreatedUser))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.assignedTo").value(savedAssignedUser));
     }
 
     @Test
-    void testCreateIssueWhenTitleMissing() throws Exception {
+    public void testCreateIssueWhenTitleMissing() throws Exception {
         IssueEntity testIssueNew = TestIssueUtil.createIssueNew();
         testIssueNew.setCreatedBy(savedCreatedUser);
         testIssueNew.setTitle("");
@@ -109,5 +110,12 @@ class IssueControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(testIssueNewJson))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void getAllIssues() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/issues"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(2)));
     }
 }

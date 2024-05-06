@@ -4,9 +4,12 @@ import com.IssueTracker.IssueTracker.Issue.Errors.MissingPropertiesException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class IssueController {
@@ -15,6 +18,14 @@ public class IssueController {
 
     public IssueController(IssueService issueService) {
         this.issueService = issueService;
+    }
+
+    @GetMapping(path = "/issues")
+    public ResponseEntity<List<IssueEntity>> getAllIssues() {
+
+        List<IssueEntity> allIssues = issueService.getAllIssues();
+
+        return new ResponseEntity<>(allIssues, HttpStatus.OK);
     }
 
     @PostMapping(path = "/issues")

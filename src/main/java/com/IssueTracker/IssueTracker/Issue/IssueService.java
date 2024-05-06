@@ -2,6 +2,10 @@ package com.IssueTracker.IssueTracker.Issue;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class IssueService {
 
@@ -9,6 +13,11 @@ public class IssueService {
 
     public IssueService(IssueRepository issueRepository) {
         this.issueRepository = issueRepository;
+    }
+
+    public List<IssueEntity> getAllIssues() {
+        return StreamSupport.stream(issueRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     public IssueEntity createIssue(IssueEntity issueEntity) {
