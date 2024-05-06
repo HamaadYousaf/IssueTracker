@@ -30,7 +30,7 @@ public class UserController {
             throw new UserExistsException();
         }
 
-        UserEntity createdUser = userService.saveUser(userEntity);
+        UserEntity createdUser = userService.createUser(userEntity);
 
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }

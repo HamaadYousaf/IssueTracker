@@ -44,11 +44,11 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         UserEntity testUserA = TestUserUtil.createTestUserA();
-        testUserASaved = userService.saveUser(testUserA);
+        testUserASaved = userService.createUser(testUserA);
         UserEntity testUserB = TestUserUtil.createTestUserB();
-        testUserBSaved = userService.saveUser(testUserB);
+        testUserBSaved = userService.createUser(testUserB);
         UserEntity testUserC = TestUserUtil.createTestUserC();
-        testUserCSaved = userService.saveUser(testUserC);
+        testUserCSaved = userService.createUser(testUserC);
     }
 
     @Test
