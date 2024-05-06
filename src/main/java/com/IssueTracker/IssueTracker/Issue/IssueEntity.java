@@ -1,5 +1,8 @@
 package com.IssueTracker.IssueTracker.Issue;
 
+import com.IssueTracker.IssueTracker.Issue.Enums.Category;
+import com.IssueTracker.IssueTracker.Issue.Enums.Priority;
+import com.IssueTracker.IssueTracker.Issue.Enums.Status;
 import com.IssueTracker.IssueTracker.User.UserEntity;
 
 import jakarta.persistence.*;
@@ -20,30 +23,33 @@ import java.time.LocalDate;
 @Table(name = "issues")
 public class IssueEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @Id private Integer id;
 
-    @NotEmpty private String title;
+    @Column(nullable = false)
+    private String title;
 
     private String description;
 
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Priority priority = Priority.NORMAL;
 
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Category category;
+    private Category category = Category.OTHER;
 
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Status status = Status.NEW;
 
+    @Column(nullable = false)
     private LocalDate creationDate = LocalDate.now();
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "created_id")
+    @ManyToOne
+    @JoinColumn(name = "created_id", nullable = false)
     private UserEntity createdBy;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "assigned_id")
     private UserEntity assignedTo;
 }

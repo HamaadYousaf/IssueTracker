@@ -44,15 +44,15 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         UserEntity testUserA = TestUserUtil.createTestUserA();
-        testUserASaved = userService.saveUser(testUserA);
+        testUserASaved = userService.createUser(testUserA);
         UserEntity testUserB = TestUserUtil.createTestUserB();
-        testUserBSaved = userService.saveUser(testUserB);
+        testUserBSaved = userService.createUser(testUserB);
         UserEntity testUserC = TestUserUtil.createTestUserC();
-        testUserCSaved = userService.saveUser(testUserC);
+        testUserCSaved = userService.createUser(testUserC);
     }
 
     @Test
-    void testCreateUserSuccess() throws Exception {
+    public void testCreateUserSuccess() throws Exception {
         UserEntity testUserNew = TestUserUtil.createTestUserNew();
         String testUserNewJson = objectMapper.writeValueAsString(testUserNew);
 
@@ -68,7 +68,7 @@ class UserControllerTest {
     }
 
     @Test
-    void testCreateUserWhenUserAlreadyExists() throws Exception {
+    public void testCreateUserWhenUserAlreadyExists() throws Exception {
         UserEntity testUserA = TestUserUtil.createTestUserA();
         String testUserAJson = objectMapper.writeValueAsString(testUserA);
 
@@ -80,7 +80,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUsers() throws Exception {
+    public void getUsers() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/users"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.size()", is(3)));
