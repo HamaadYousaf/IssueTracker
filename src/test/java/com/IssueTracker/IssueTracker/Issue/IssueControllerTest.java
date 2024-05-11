@@ -3,6 +3,9 @@ package com.IssueTracker.IssueTracker.Issue;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import com.IssueTracker.IssueTracker.Issue.Enums.Category;
+import com.IssueTracker.IssueTracker.Issue.Enums.Priority;
+import com.IssueTracker.IssueTracker.Issue.Enums.Status;
 import com.IssueTracker.IssueTracker.User.TestUserUtil;
 import com.IssueTracker.IssueTracker.User.UserEntity;
 import com.IssueTracker.IssueTracker.User.UserService;
@@ -118,5 +121,118 @@ class IssueControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/issues"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)));
+    }
+
+    @Test
+    public void testGetIssueById() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/issues/" + savedIssue1.getId())
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(savedIssue1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("test title 1"))
+                .andExpect(
+                        MockMvcResultMatchers.jsonPath("$.description").value("test description 1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.priority").value("HIGH"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.category").value("BUG"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("ASSIGNED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creationDate").value("2020-01-01"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.createdBy").value(savedCreatedUser))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.assignedTo").value(savedAssignedUser));
+    }
+
+    @Test
+    public void testGetIssueByIdWhenIssueDoesNotExist() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get("/issues/999999")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateIssueDescById() throws Exception {
+        savedIssue1.setDescription("UPDATED");
+        String testIssueUpdatedJson = objectMapper.writeValueAsString(savedIssue1);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/issues/" + savedIssue1.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testIssueUpdatedJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(savedIssue1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("test title 1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("UPDATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.priority").value("HIGH"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.category").value("BUG"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("ASSIGNED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creationDate").value("2020-01-01"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.createdBy").value(savedCreatedUser))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.assignedTo").value(savedAssignedUser));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/issues"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(2)));
+    }
+
+    @Test
+    public void testFullUpdateIssueById() throws Exception {
+        savedIssue1.setTitle("UPDATED");
+        savedIssue1.setDescription("UPDATED");
+        savedIssue1.setPriority(Priority.LOW);
+        savedIssue1.setStatus(Status.RESOLVED);
+        savedIssue1.setCategory(Category.OTHER);
+        savedIssue1.setAssignedTo(savedCreatedUser);
+        String testIssueUpdatedJson = objectMapper.writeValueAsString(savedIssue1);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/issues/" + savedIssue1.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testIssueUpdatedJson))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(savedIssue1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("UPDATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("UPDATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.priority").value("LOW"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.category").value("OTHER"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("RESOLVED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.creationDate").value("2020-01-01"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.createdBy").value(savedCreatedUser))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.assignedTo").value(savedCreatedUser));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/issues"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(2)));
+    }
+
+    @Test
+    public void testUpdateIssueByIdWhenIssueDoesNotExist() throws Exception {
+        savedIssue1.setDescription("UPDATED");
+        String testIssueUpdatedJson = objectMapper.writeValueAsString(savedIssue1);
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.put("/issues/999999")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(testIssueUpdatedJson))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteIssueById() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/issues/" + savedIssue1.getId())
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/issues"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(1)));
+    }
+
+    @Test
+    public void testDeleteIssueByIdWhenIssueDoesNotExist() throws Exception {
+        mockMvc.perform(
+                        MockMvcRequestBuilders.delete("/issues/999999")
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 }
