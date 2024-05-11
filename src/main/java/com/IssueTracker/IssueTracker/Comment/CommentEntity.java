@@ -22,18 +22,19 @@ import java.time.LocalDate;
 public class CommentEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotEmpty private String description;
+    @Column(nullable = false)
+    private String description;
 
+    @Column(nullable = false)
     private LocalDate creationDate = LocalDate.now();
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "issue_id")
-    private IssueEntity issue;
+    @Column(nullable = false)
+    private Integer issueId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 }

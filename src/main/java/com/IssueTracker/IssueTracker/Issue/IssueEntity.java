@@ -6,7 +6,6 @@ import com.IssueTracker.IssueTracker.Issue.Enums.Status;
 import com.IssueTracker.IssueTracker.User.UserEntity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

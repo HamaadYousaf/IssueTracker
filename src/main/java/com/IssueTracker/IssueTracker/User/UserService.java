@@ -34,7 +34,7 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public boolean userExists(Long id) {
+    public boolean userDoesNotExists(Long id) {
         return !userRepository.existsById(id);
     }
 

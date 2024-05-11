@@ -31,4 +31,8 @@ public class IssueService {
 
         return issueRepository.save(issueEntity);
     }
+
+    public boolean issueDoesNotExists(Integer id) {
+        return !issueRepository.existsById(id);
+    }
 }

@@ -59,7 +59,7 @@ public class UserController {
     public ResponseEntity<UserEntity> updateUserById(
             @RequestBody UserEntity userEntity, @PathVariable("id") Long id) {
 
-        if (userService.userExists(id)) {
+        if (userService.userDoesNotExists(id)) {
             throw new UserNotFoundException();
         } else {
             UserEntity updatedUser = userService.updateUser(userEntity, id);
@@ -71,7 +71,7 @@ public class UserController {
     @DeleteMapping(path = "/users/{id}")
     public ResponseEntity<UserEntity> deleteUserById(@PathVariable("id") Long id) {
 
-        if (userService.userExists(id)) {
+        if (userService.userDoesNotExists(id)) {
             throw new UserNotFoundException();
         }
 
