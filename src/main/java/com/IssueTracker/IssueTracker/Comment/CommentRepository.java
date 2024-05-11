@@ -8,5 +8,5 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends CrudRepository<CommentEntity, Long> {
 
-    public List<CommentEntity> getCommentsByIssueId(String id);
+    public List<CommentEntity> getCommentsByIssueId(Integer id);
 }

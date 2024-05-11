@@ -32,7 +32,7 @@ public class CommentEntity {
     private LocalDate creationDate = LocalDate.now();
 
     @Column(nullable = false)
-    private String issueId;
+    private Integer issueId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

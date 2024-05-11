@@ -3,6 +3,7 @@ package com.IssueTracker.IssueTracker.Issue;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import com.IssueTracker.IssueTracker.User.TestUserUtil;
 import com.IssueTracker.IssueTracker.User.UserEntity;
 import com.IssueTracker.IssueTracker.User.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,9 +59,9 @@ class IssueControllerTest {
 
     @BeforeEach
     void setUp() {
-        UserEntity createdUser = TestIssueUtil.createdUser();
+        UserEntity createdUser = TestUserUtil.createTestUserA();
         savedCreatedUser = userService.createUser(createdUser);
-        UserEntity assignedUser = TestIssueUtil.assignedUser();
+        UserEntity assignedUser = TestUserUtil.createTestUserB();
         savedAssignedUser = userService.createUser(assignedUser);
 
         IssueEntity issue1 = TestIssueUtil.createIssue1();

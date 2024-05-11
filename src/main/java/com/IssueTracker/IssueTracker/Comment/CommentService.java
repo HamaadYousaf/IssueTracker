@@ -17,7 +17,7 @@ public class CommentService {
         return commentRepository.save(commentEntity);
     }
 
-    public List<CommentEntity> getCommentsByIssue(String id){
+    public List<CommentEntity> getCommentsByIssue(Integer id) {
         return commentRepository.getCommentsByIssueId(id);
     }
 }
