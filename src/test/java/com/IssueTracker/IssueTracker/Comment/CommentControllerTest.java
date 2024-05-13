@@ -58,7 +58,6 @@ class CommentControllerTest {
             IssueService issueService,
             UserService userService,
             MockMvc mockMvc,
-            ObjectMapper objectMapper,
             CommentService commentService) {
         this.issueService = issueService;
         this.userService = userService;
@@ -70,36 +69,28 @@ class CommentControllerTest {
 
     @BeforeEach
     void setUp() {
-        UserEntity createdUser = TestUserUtil.createTestUserA();
-        savedCreatedUser = userService.createUser(createdUser);
-        UserEntity assignedUser = TestUserUtil.createTestUserB();
-        savedAssignedUser = userService.createUser(assignedUser);
+        savedCreatedUser = userService.createUser(TestUserUtil.createTestUserA());
+        savedAssignedUser = userService.createUser(TestUserUtil.createTestUserB());
 
-        IssueEntity issue1 = TestIssueUtil.createIssue1();
-        issue1.setCreatedBy(createdUser);
-        issue1.setAssignedTo(assignedUser);
-        savedIssue1 = issueService.createIssue(issue1);
+        savedIssue1 =
+                issueService.createIssue(
+                        TestIssueUtil.createIssue1(savedCreatedUser, savedAssignedUser));
+        savedIssue2 =
+                issueService.createIssue(
+                        TestIssueUtil.createIssue2(savedCreatedUser, savedAssignedUser));
 
-        IssueEntity issue2 = TestIssueUtil.createIssue2();
-        issue2.setCreatedBy(createdUser);
-        savedIssue2 = issueService.createIssue(issue2);
-
-        CommentEntity comment1 = TestCommentUtil.createTestComment1();
-        comment1.setIssueId(savedIssue1.getId());
-        comment1.setUser(savedCreatedUser);
-        savedComment1 = commentService.createComment(comment1);
-
-        CommentEntity comment2 = TestCommentUtil.createTestComment2();
-        comment2.setIssueId(savedIssue1.getId());
-        comment2.setUser(savedCreatedUser);
-        savedComment2 = commentService.createComment(comment2);
+        savedComment1 =
+                commentService.createComment(
+                        TestCommentUtil.createTestComment1(savedIssue1.getId(), savedCreatedUser));
+        savedComment2 =
+                commentService.createComment(
+                        TestCommentUtil.createTestComment2(savedIssue1.getId(), savedCreatedUser));
     }
 
     @Test
     public void testCreateCommentSuccess() throws Exception {
-        CommentEntity testCommentNew = TestCommentUtil.createTestCommentNew();
-        testCommentNew.setUser(savedCreatedUser);
-        testCommentNew.setIssueId(savedIssue1.getId());
+        CommentEntity testCommentNew =
+                TestCommentUtil.createTestCommentNew(savedIssue1.getId(), savedCreatedUser);
         String testCommentNewJson = objectMapper.writeValueAsString(testCommentNew);
 
         mockMvc.perform(
@@ -116,9 +107,8 @@ class CommentControllerTest {
 
     @Test
     public void testCreateCommentNoDesc() throws Exception {
-        CommentEntity testCommentNew = TestCommentUtil.createTestCommentNew();
-        testCommentNew.setUser(savedCreatedUser);
-        testCommentNew.setIssueId(savedIssue1.getId());
+        CommentEntity testCommentNew =
+                TestCommentUtil.createTestCommentNew(savedIssue1.getId(), savedCreatedUser);
         testCommentNew.setDescription("");
         String testCommentNewJson = objectMapper.writeValueAsString(testCommentNew);
 
@@ -131,9 +121,8 @@ class CommentControllerTest {
 
     @Test
     public void testCreateCommentIssueDoesNotExist() throws Exception {
-        CommentEntity testCommentNew = TestCommentUtil.createTestCommentNew();
-        testCommentNew.setUser(savedCreatedUser);
-        testCommentNew.setIssueId(99999);
+        CommentEntity testCommentNew =
+                TestCommentUtil.createTestCommentNew(99999, savedCreatedUser);
         String testCommentNewJson = objectMapper.writeValueAsString(testCommentNew);
 
         mockMvc.perform(

@@ -49,10 +49,7 @@ class IssueControllerTest {
 
     @Autowired
     public IssueControllerTest(
-            IssueService issueService,
-            MockMvc mockMvc,
-            ObjectMapper objectMapper,
-            UserService userService) {
+            IssueService issueService, MockMvc mockMvc, UserService userService) {
         this.issueService = issueService;
         this.userService = userService;
         this.mockMvc = mockMvc;
@@ -62,26 +59,21 @@ class IssueControllerTest {
 
     @BeforeEach
     void setUp() {
-        UserEntity createdUser = TestUserUtil.createTestUserA();
-        savedCreatedUser = userService.createUser(createdUser);
-        UserEntity assignedUser = TestUserUtil.createTestUserB();
-        savedAssignedUser = userService.createUser(assignedUser);
+        savedCreatedUser = userService.createUser(TestUserUtil.createTestUserA());
+        savedAssignedUser = userService.createUser(TestUserUtil.createTestUserB());
 
-        IssueEntity issue1 = TestIssueUtil.createIssue1();
-        issue1.setCreatedBy(createdUser);
-        issue1.setAssignedTo(assignedUser);
-        savedIssue1 = issueService.createIssue(issue1);
-
-        IssueEntity issue2 = TestIssueUtil.createIssue2();
-        issue2.setCreatedBy(createdUser);
-        savedIssue2 = issueService.createIssue(issue2);
+        savedIssue1 =
+                issueService.createIssue(
+                        TestIssueUtil.createIssue1(savedCreatedUser, savedAssignedUser));
+        savedIssue2 =
+                issueService.createIssue(
+                        TestIssueUtil.createIssue2(savedCreatedUser, savedAssignedUser));
     }
 
     @Test
     public void testCreateIssueSuccess() throws Exception {
-        IssueEntity testIssueNew = TestIssueUtil.createIssueNew();
-        testIssueNew.setCreatedBy(savedCreatedUser);
-        testIssueNew.setAssignedTo(savedAssignedUser);
+        IssueEntity testIssueNew =
+                TestIssueUtil.createIssueNew(savedCreatedUser, savedAssignedUser);
         String testIssueNewJson = objectMapper.writeValueAsString(testIssueNew);
 
         mockMvc.perform(
@@ -104,8 +96,8 @@ class IssueControllerTest {
 
     @Test
     public void testCreateIssueWhenTitleMissing() throws Exception {
-        IssueEntity testIssueNew = TestIssueUtil.createIssueNew();
-        testIssueNew.setCreatedBy(savedCreatedUser);
+        IssueEntity testIssueNew =
+                TestIssueUtil.createIssueNew(savedCreatedUser, savedAssignedUser);
         testIssueNew.setTitle("");
         String testIssueNewJson = objectMapper.writeValueAsString(testIssueNew);
 
@@ -140,6 +132,13 @@ class IssueControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdBy").value(savedCreatedUser))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.assignedTo").value(savedAssignedUser));
     }
+
+    //    @Test
+    //    public void getIssuesWithFilters() throws Exception {
+    //        mockMvc.perform(MockMvcRequestBuilders.get("/issues"))
+    //                .andExpect(MockMvcResultMatchers.status().isOk())
+    //                .andExpect(jsonPath("$.size()", is(2)));
+    //    }
 
     @Test
     public void testGetIssueByIdWhenIssueDoesNotExist() throws Exception {
