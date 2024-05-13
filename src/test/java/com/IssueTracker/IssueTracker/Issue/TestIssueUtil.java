@@ -37,6 +37,45 @@ public class TestIssueUtil {
                 .build();
     }
 
+    public static IssueEntity createIssue3(UserEntity createdBy, UserEntity assignedTo) {
+        return IssueEntity.builder()
+                .title("test title")
+                .description("test description")
+                .createdBy(createdBy)
+                .assignedTo(assignedTo)
+                .priority(Priority.NORMAL)
+                .category(Category.FEATURE)
+                .status(Status.NEW)
+                .creationDate(LocalDate.of(2020, 1, 1))
+                .build();
+    }
+
+    public static IssueEntity createIssue4(UserEntity createdBy, UserEntity assignedTo) {
+        return IssueEntity.builder()
+                .title("test title")
+                .description("test description")
+                .createdBy(createdBy)
+                .assignedTo(assignedTo)
+                .priority(Priority.NORMAL)
+                .category(Category.FEATURE)
+                .status(Status.NEW)
+                .creationDate(LocalDate.of(2021, 1, 1))
+                .build();
+    }
+
+    public static IssueEntity createIssue5(UserEntity createdBy, UserEntity assignedTo) {
+        return IssueEntity.builder()
+                .title("test title")
+                .description("test description")
+                .createdBy(createdBy)
+                .assignedTo(assignedTo)
+                .priority(Priority.NORMAL)
+                .category(Category.FEATURE)
+                .status(Status.NEW)
+                .creationDate(LocalDate.of(2022, 1, 1))
+                .build();
+    }
+
     public static IssueEntity createIssueNew(UserEntity createdBy, UserEntity assignedTo) {
         return IssueEntity.builder()
                 .title("test title new")

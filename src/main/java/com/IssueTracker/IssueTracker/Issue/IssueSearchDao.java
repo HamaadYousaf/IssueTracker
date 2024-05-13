@@ -53,7 +53,6 @@ public class IssueSearchDao {
         }
 
         if (createdBy != null) {
-            System.out.println(createdBy);
             Predicate createdByPredicate = cb.equal(root.get("createdBy"), createdBy);
             predicates.add(createdByPredicate);
         }

@@ -133,12 +133,46 @@ class IssueControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.assignedTo").value(savedAssignedUser));
     }
 
-    //    @Test
-    //    public void getIssuesWithFilters() throws Exception {
-    //        mockMvc.perform(MockMvcRequestBuilders.get("/issues"))
-    //                .andExpect(MockMvcResultMatchers.status().isOk())
-    //                .andExpect(jsonPath("$.size()", is(2)));
-    //    }
+    @Test
+    public void getIssuesWithFilters() throws Exception {
+        issueService.createIssue(TestIssueUtil.createIssue3(savedAssignedUser, savedCreatedUser));
+        issueService.createIssue(TestIssueUtil.createIssue4(savedAssignedUser, savedCreatedUser));
+        issueService.createIssue(TestIssueUtil.createIssue5(savedAssignedUser, savedCreatedUser));
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders.get(
+                                "/issues?priority=NORMAL&category=FEATURE&status=NEW&createdBy=test name B&assignedTo=test name A"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)));
+    }
+
+    @Test
+    public void getIssuesWithFiltersDateDesc() throws Exception {
+        issueService.createIssue(TestIssueUtil.createIssue3(savedAssignedUser, savedCreatedUser));
+        issueService.createIssue(TestIssueUtil.createIssue4(savedAssignedUser, savedCreatedUser));
+        issueService.createIssue(TestIssueUtil.createIssue5(savedAssignedUser, savedCreatedUser));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/issues?priority=NORMAL&sortDate=desc"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)))
+                .andExpect(jsonPath("$[0].creationDate").value("2022-01-01"))
+                .andExpect(jsonPath("$[1].creationDate").value("2021-01-01"))
+                .andExpect(jsonPath("$[2].creationDate").value("2020-01-01"));
+    }
+
+    @Test
+    public void getIssuesWithFiltersDateAsc() throws Exception {
+        issueService.createIssue(TestIssueUtil.createIssue3(savedAssignedUser, savedCreatedUser));
+        issueService.createIssue(TestIssueUtil.createIssue4(savedAssignedUser, savedCreatedUser));
+        issueService.createIssue(TestIssueUtil.createIssue5(savedAssignedUser, savedCreatedUser));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/issues?priority=NORMAL&sortDate=asc"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.size()", is(3)))
+                .andExpect(jsonPath("$[0].creationDate").value("2020-01-01"))
+                .andExpect(jsonPath("$[1].creationDate").value("2021-01-01"))
+                .andExpect(jsonPath("$[2].creationDate").value("2022-01-01"));
+    }
 
     @Test
     public void testGetIssueByIdWhenIssueDoesNotExist() throws Exception {
