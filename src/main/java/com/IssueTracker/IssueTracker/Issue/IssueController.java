@@ -37,7 +37,8 @@ public class IssueController {
             @RequestParam(required = false) Category category,
             @RequestParam(required = false) Status status,
             @RequestParam(required = false) String createdBy,
-            @RequestParam(required = false) String assignedTo) {
+            @RequestParam(required = false) String assignedTo,
+            @RequestParam(required = false) String sortDate) {
 
         UserEntity createdByUser = null;
         UserEntity assignedToUser = null;
@@ -52,7 +53,7 @@ public class IssueController {
 
         List<IssueEntity> allIssues =
                 issueSearchDao.searchByFilters(
-                        priority, category, status, createdByUser, assignedToUser);
+                        priority, category, status, createdByUser, assignedToUser, sortDate);
 
         return new ResponseEntity<>(allIssues, HttpStatus.OK);
     }

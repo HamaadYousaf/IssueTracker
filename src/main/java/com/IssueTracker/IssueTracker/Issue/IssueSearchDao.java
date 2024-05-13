@@ -7,15 +7,13 @@ import com.IssueTracker.IssueTracker.User.UserEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class IssueSearchDao {
@@ -31,7 +29,8 @@ public class IssueSearchDao {
             Category category,
             Status status,
             UserEntity createdBy,
-            UserEntity assignedTo) {
+            UserEntity assignedTo,
+            String dateOrder) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<IssueEntity> cq = cb.createQuery(IssueEntity.class);
         Root<IssueEntity> root = cq.from(IssueEntity.class);
@@ -65,7 +64,15 @@ public class IssueSearchDao {
         }
 
         Predicate andPredicate = cb.and(predicates.toArray(new Predicate[0]));
+
         cq.where(andPredicate);
+
+        if (Objects.equals(dateOrder, "desc")) {
+            cq.orderBy(cb.desc(root.get("creationDate")));
+        }
+        if (Objects.equals(dateOrder, "asc")) {
+            cq.orderBy(cb.asc(root.get("creationDate")));
+        }
 
         TypedQuery<IssueEntity> query = em.createQuery(cq);
         return query.getResultList();
