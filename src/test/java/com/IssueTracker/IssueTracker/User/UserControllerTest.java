@@ -43,12 +43,9 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        UserEntity testUserA = TestUserUtil.createTestUserA();
-        testUserASaved = userService.createUser(testUserA);
-        UserEntity testUserB = TestUserUtil.createTestUserB();
-        testUserBSaved = userService.createUser(testUserB);
-        UserEntity testUserC = TestUserUtil.createTestUserC();
-        testUserCSaved = userService.createUser(testUserC);
+        testUserASaved = userService.createUser(TestUserUtil.createTestUserA());
+        testUserBSaved = userService.createUser(TestUserUtil.createTestUserB());
+        testUserCSaved = userService.createUser(TestUserUtil.createTestUserC());
     }
 
     @Test
@@ -241,7 +238,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void testLoginUserSuccessful() throws Exception{
+    public void testLoginUserSuccessful() throws Exception {
         UserEntity testUserA = TestUserUtil.createTestUserA();
         String testUserAJson = objectMapper.writeValueAsString(testUserA);
 
@@ -253,7 +250,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void testLoginUserIncorrectUsername() throws Exception{
+    public void testLoginUserIncorrectUsername() throws Exception {
         UserEntity testUserA = TestUserUtil.createTestUserA();
         testUserA.setUsername("INCORRECT");
         String testUserAJson = objectMapper.writeValueAsString(testUserA);
@@ -266,7 +263,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void testLoginUserIncorrectEmail() throws Exception{
+    public void testLoginUserIncorrectEmail() throws Exception {
         UserEntity testUserA = TestUserUtil.createTestUserA();
         testUserA.setEmail("INCORRECT");
         String testUserAJson = objectMapper.writeValueAsString(testUserA);
@@ -279,7 +276,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void testLoginUserIncorrectPassword() throws Exception{
+    public void testLoginUserIncorrectPassword() throws Exception {
         UserEntity testUserA = TestUserUtil.createTestUserA();
         testUserA.setPassword("INCORRECT");
         String testUserAJson = objectMapper.writeValueAsString(testUserA);

@@ -1,7 +1,12 @@
 package com.IssueTracker.IssueTracker.Issue;
 
+import com.IssueTracker.IssueTracker.Issue.Enums.Category;
+import com.IssueTracker.IssueTracker.Issue.Enums.Priority;
+import com.IssueTracker.IssueTracker.Issue.Enums.Status;
 import com.IssueTracker.IssueTracker.Issue.Errors.IssueNotFoundException;
 import com.IssueTracker.IssueTracker.Issue.Errors.MissingTitleException;
+import com.IssueTracker.IssueTracker.User.UserEntity;
+import com.IssueTracker.IssueTracker.User.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +20,40 @@ public class IssueController {
 
     private final IssueService issueService;
 
-    public IssueController(IssueService issueService) {
+    private final UserService userService;
+
+    private final IssueSearchDao issueSearchDao;
+
+    public IssueController(
+            IssueService issueService, UserService userService, IssueSearchDao issueSearchDao) {
         this.issueService = issueService;
+        this.userService = userService;
+        this.issueSearchDao = issueSearchDao;
     }
 
     @GetMapping(path = "/issues")
-    public ResponseEntity<List<IssueEntity>> getAllIssues() {
+    public ResponseEntity<List<IssueEntity>> getAllIssues(
+            @RequestParam(required = false) Priority priority,
+            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) String createdBy,
+            @RequestParam(required = false) String assignedTo,
+            @RequestParam(required = false) String sortDate) {
 
-        List<IssueEntity> allIssues = issueService.getAllIssues();
+        UserEntity createdByUser = null;
+        UserEntity assignedToUser = null;
+
+        if (createdBy != null && !createdBy.isBlank()) {
+            createdByUser = userService.getUserByUsername(createdBy);
+        }
+
+        if (assignedTo != null && !assignedTo.isBlank()) {
+            assignedToUser = userService.getUserByUsername(assignedTo);
+        }
+
+        List<IssueEntity> allIssues =
+                issueSearchDao.searchByFilters(
+                        priority, category, status, createdByUser, assignedToUser, sortDate);
 
         return new ResponseEntity<>(allIssues, HttpStatus.OK);
     }
