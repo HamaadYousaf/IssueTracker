@@ -1,8 +1,7 @@
 # Issue Tracking System
 
-An API for an issue tracking system with users able to create,update,delete,assign,comment, and view issues with
-multiple
-search filters.
+An API for an issue tracking system with users able to create, update, delete, assign, comment, and view issues with
+multiple search filters.
 
 Used GitHub Actions to automatically build the project using Maven and build/push the docker image of the project to
 DockerHub.
